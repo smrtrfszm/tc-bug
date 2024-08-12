@@ -1,0 +1,10 @@
+[package]
+name = "tc-bug"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlx = { version = "0.8.0", default-features = false, features = ["postgres", "runtime-tokio"] }
+testcontainers = "0.21.1"
+testcontainers-modules = { version = "0.9.0", features = ["postgres"] }
+tokio = { version = "1.39.2", features = ["rt", "macros"], default-features = false }
