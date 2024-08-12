@@ -1,10 +1,107 @@
 [package]
-name = "tc-bug"
+name = "matverseny-backend"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license-file.workspace = true
+rust-version = "1.76"
+default-run = "matverseny-backend"
+
+[lints]
+workspace = true
+
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
+publish = false
+license-file = "LICENSE"
+
+[workspace.lints.rust]
+rust_2018_idioms = "warn"
+future_incompatible = "warn"
+nonstandard_style = "warn"
+elided_lifetimes_in_paths = { level = "allow", priority = 1 }
+
+[workspace.lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+empty_enum = "warn"
+enum_glob_use = "warn"
+mem_forget = "warn"
+unused_self = "warn"
+filter_map_next = "warn"
+needless_continue = "warn"
+match_wildcard_for_single_variants = "warn"
+match_on_vec_items = "warn"
+imprecise_flops = "warn"
+suboptimal_flops = "warn"
+lossy_float_literal = "warn"
+rest_pat_in_fully_bound_structs = "warn"
+fn_params_excessive_bools = "warn"
+exit = "warn"
+inefficient_to_string = "warn"
+linkedlist = "warn"
+macro_use_imports = "warn"
+unnested_or_patterns = "warn"
+str_to_string = "warn"
+
+
+
+[profile.release]
+strip = true
+lto = true
+
+[workspace]
+members = [".", "entity", "migration", "macros", "cmds"]
+default-members = [".", "migration", "cmds"]
 
 [dependencies]
-sqlx = { version = "0.8.0", default-features = false, features = ["postgres", "runtime-tokio"] }
-testcontainers = "0.21.1"
-testcontainers-modules = { version = "0.9.0", features = ["postgres"] }
-tokio = { version = "1.39.2", features = ["rt", "macros"], default-features = false }
+axum = { version = "0.7.5", features = ["ws", "http2"] }
+serde.workspace = true
+tokio = { workspace = true, features = ["macros", "signal", "sync"] }
+tower = "0.4.13"
+tower-http = { version = "0.5.2", features = ["cors", "compression-full", "decompression-full", "catch-panic", "sensitive-headers", "request-id", "util", "normalize-path"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+entity.workspace = true
+sea-orm.workspace = true
+serde_json = "1.0.108"
+validator = { version = "0.18.1", features = ["derive"] }
+pin-project = "1.1.3"
+jsonwebtoken = "9.1.0"
+once_cell = { version = "1.18.0", features = ["parking_lot"] }
+rand = "0.8.5"
+futures = "0.3.29"
+rand_chacha = "0.3.1"
+serde_with = "3.4.0"
+tokio-tungstenite = "0.23.1"
+sqlx = { version = "0.7.2", default-features = false, features = ["postgres"] }
+uuid.workspace = true
+bytes = "1.5.0"
+mime = "0.3.17"
+macros = { path = "./macros/" }
+smallvec = "1.11.1"
+const_format.workspace = true
+pin-project-lite = "0.2.13"
+reqwest = { version = "0.12.5", default-features = false, features = ["json", "rustls-tls"] }
+libiam = { git = "https://github.com/Verseghy/iam", package = "libiam" }
+chrono = { version = "0.4.31", features = ["serde"] }
+async-nats = "0.35.1"
+headers = "0.4.0"
+anyhow = "1.0.86"
+
+[workspace.dependencies]
+const_format = "0.2.32"
+entity = { path = "./entity" }
+sea-orm = { version = "0.12.7", default-features = false, features = ["runtime-tokio-rustls", "sqlx-postgres", "with-uuid", "with-chrono"] }
+serde = { version = "1.0.193", features = ["derive"] }
+tokio = { version = "1.33.0", features = ["rt-multi-thread", "parking_lot", "macros"] }
+uuid = { version = "1.5.0", features = ["v4", "fast-rng", "serde"] }
+
+[dev-dependencies]
+dotenvy = "0.15.7"
+http = "1.1.0"
+migration = { path = "./migration" }
+assert-json-diff = "2.0.2"
+testcontainers = "0.20.0"
+testcontainers-modules = { version = "0.8.0", features = ["nats", "postgres"] }
