@@ -5,6 +5,7 @@ use super::{
     user::{User, UserLike},
     uuid,
 };
+use futures::executor::block_on;
 use http::StatusCode;
 use libiam::{
     testing::{
@@ -19,8 +20,10 @@ use reqwest::Client;
 use sea_orm::{Database, DbConn};
 use serde_json::json;
 use std::{
+    cell::Cell,
     env,
     net::SocketAddr,
+    rc::Rc,
     sync::{
         atomic::{AtomicU64, Ordering},
         Arc,
@@ -31,7 +34,7 @@ use testcontainers::{
     ImageExt,
 };
 use testcontainers_modules::{nats::Nats, postgres::Postgres};
-use tokio::net::TcpListener;
+use tokio::{net::TcpListener, task::JoinHandle};
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Layer};
 
@@ -131,17 +134,17 @@ async fn setup_nats() -> ContainerAsync<Nats> {
     container
 }
 
-async fn setup_backend(app: App) -> SocketAddr {
+async fn setup_backend(app: App) -> (JoinHandle<()>, SocketAddr) {
     let listener = TcpListener::bind("0.0.0.0:0").await.unwrap();
     let state = State::new(app).await;
 
     let addr = listener.local_addr().unwrap();
 
-    tokio::spawn(async move {
+    let handle = tokio::spawn(async move {
         matverseny_backend::run(listener, state).await.unwrap();
     });
 
-    addr
+    (handle, addr)
 }
 
 #[allow(unused)]
@@ -153,8 +156,7 @@ pub async fn setup() -> Env {
     let (app, iam, iam_db) = setup_iam().await;
     let db_container = setup_database().await;
     let nats_container = setup_nats().await;
-
-    let addr = setup_backend(app).await;
+    let (handle, addr) = setup_backend(app).await;
 
     Env {
         addr,
@@ -162,8 +164,9 @@ pub async fn setup() -> Env {
         iam,
         iam_db,
         team_num: Arc::new(AtomicU64::new(0)),
-        _db_container: Arc::new(db_container),
-        _nats_container: Arc::new(nats_container),
+        _backend_handle: Rc::new(handle),
+        _db_container: Rc::new(Cell::new(Some(db_container))),
+        _nats_container: Rc::new(Cell::new(Some(nats_container))),
     }
 }
 
@@ -174,8 +177,19 @@ pub struct Env {
     pub iam: Iam,
     pub iam_db: DbConn,
     pub team_num: Arc<AtomicU64>,
-    _db_container: Arc<ContainerAsync<Postgres>>,
-    _nats_container: Arc<ContainerAsync<Nats>>,
+    _backend_handle: Rc<JoinHandle<()>>,
+    _db_container: Rc<Cell<Option<ContainerAsync<Postgres>>>>,
+    _nats_container: Rc<Cell<Option<ContainerAsync<Nats>>>>,
+}
+
+impl Drop for Env {
+    fn drop(&mut self) {
+        self._backend_handle.abort();
+        block_on(async move {
+            let _ = self._db_container.take().unwrap().rm().await;
+            let _ = self._nats_container.take().unwrap().rm().await;
+        });
+    }
 }
 
 impl Env {
