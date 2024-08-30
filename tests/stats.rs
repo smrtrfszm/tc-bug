@@ -5,10 +5,10 @@ use utils::prelude::*;
 
 #[tokio::test]
 async fn not_admin() {
-    let app = setup().await;
-    let user = app.register_user().await;
+    let env = setup().await;
+    let user = env.register_user().await;
 
-    let res = app
+    let res = env
         .post("/stats")
         .user(&user)
         .json(&json!({
