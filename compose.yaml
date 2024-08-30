@@ -1,0 +1,36 @@
+services:
+  iam:
+    pull_policy: always
+    image: ghcr.io/verseghy/iam
+    environment:
+      DATABASE_URL: mysql://iam:secret@iam-database:3306/iam
+    ports:
+      - 3001:3001
+    depends_on:
+      iam-migration:
+        condition: service_completed_successfully
+
+  iam-database:
+    image: docker.io/mysql:8.0
+    environment:
+      MYSQL_DATABASE: iam
+      MYSQL_USER: iam
+      MYSQL_PASSWORD: secret
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      TZ: Europe/Budapest
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 1s
+      timeout: 1s
+      retries: 100
+
+  iam-migration:
+    pull_policy: always
+    image: ghcr.io/verseghy/iam-migration
+    environment:
+      DATABASE_URL: mysql://iam:secret@iam-database:3306/iam
+    depends_on:
+      iam-database:
+        condition: service_healthy

@@ -1,0 +1,15 @@
+[package]
+name = "entity"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license-file.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+sea-orm = { workspace = true, features = ["macros"] }
+serde.workspace = true
+serde_repr = "0.1.17"
+uuid.workspace = true

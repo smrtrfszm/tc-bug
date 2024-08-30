@@ -1,0 +1,14 @@
+target
+deny.toml
+LICENSE
+compose.yaml
+compose.local.yaml
+Containerfile
+containerfiles/
+tests
+Makefile
+.github/
+.git
+.env
+.env.template
+.gitignore
