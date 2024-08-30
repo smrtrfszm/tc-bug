@@ -13,6 +13,8 @@ mod time {
         let res = env.put("/competition/time").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -23,6 +25,8 @@ mod time {
         let res = env.patch("/competition/time").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -55,6 +59,8 @@ mod time {
                 "start_time": 123,
             })
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -87,6 +93,8 @@ mod time {
                 "end_time": 123,
             })
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -121,6 +129,8 @@ mod time {
                 "end_time": 234,
             })
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -161,5 +171,7 @@ mod time {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 }

@@ -10,6 +10,8 @@ async fn no_claims() {
     let res = env.post("/register").json(&json!({})).send().await;
 
     assert_error!(res, error::COULD_NOT_GET_CLAIMS);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -24,6 +26,8 @@ async fn not_bearer_token() {
         .await;
 
     assert_error!(res, error::COULD_NOT_GET_CLAIMS);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -38,6 +42,8 @@ async fn invalid_claims() {
         .await;
 
     assert_error!(res, error::COULD_NOT_GET_CLAIMS);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -62,6 +68,8 @@ async fn success() {
         .await;
 
     assert_eq!(res.status(), StatusCode::CREATED);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -92,4 +100,6 @@ async fn already_registered() {
         .await;
 
     assert_error!(res, error::USER_ALREADY_EXISTS);
+
+    env.stop().await;
 }

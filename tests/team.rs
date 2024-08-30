@@ -20,6 +20,8 @@ mod create {
             .await;
 
         assert_eq!(res.status(), StatusCode::CREATED);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -37,6 +39,8 @@ mod create {
             .await;
 
         assert_eq!(res.status(), StatusCode::CREATED);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -67,6 +71,8 @@ mod create {
             .await;
 
         assert_error!(res, error::DUPLICATE_TEAM_NAME);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -95,6 +101,8 @@ mod create {
             .await;
 
         assert_error!(res, error::ALREADY_IN_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -111,7 +119,9 @@ mod create {
             .send()
             .await;
 
-        assert_error!(res, error::USER_NOT_REGISTERED)
+        assert_error!(res, error::USER_NOT_REGISTERED);
+
+        env.stop().await;
     }
 }
 
@@ -157,6 +167,8 @@ mod join {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -174,6 +186,8 @@ mod join {
             .await;
 
         assert_error!(res, error::JOIN_CODE_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -195,6 +209,8 @@ mod join {
             .await;
 
         assert_error!(res, error::ALREADY_IN_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -217,6 +233,8 @@ mod join {
             .await;
 
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 }
 
@@ -251,6 +269,8 @@ mod leave {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -264,6 +284,8 @@ mod leave {
         let res = env.post("/team/leave").user(&user).send().await;
 
         assert_error!(res, error::USER_NOT_IN_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -279,6 +301,8 @@ mod leave {
 
         let res = env.post("/team/leave").user(&member).send().await;
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -290,6 +314,8 @@ mod leave {
         let res = env.post("/team/leave").user(&owner).send().await;
 
         assert_error!(res, error::OWNER_CANNOT_LEAVE);
+
+        env.stop().await;
     }
 }
 
@@ -305,6 +331,8 @@ mod update {
         let res = env.patch("/team").user(&user).json(&json!({})).send().await;
 
         assert_eq!(res.status(), StatusCode::NO_CONTENT);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -337,6 +365,8 @@ mod update {
             .await;
 
         assert_error!(res, error::USER_NOT_OWNER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -366,6 +396,8 @@ mod update {
             .await;
 
         assert_error!(res, error::NO_SUCH_MEMBER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -397,6 +429,8 @@ mod update {
             .await;
 
         assert_error!(res, error::NO_SUCH_MEMBER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -414,6 +448,8 @@ mod update {
             .await;
 
         assert_error!(res, error::USER_NOT_IN_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -433,6 +469,8 @@ mod update {
             .await;
 
         assert_eq!(res.status(), StatusCode::NO_CONTENT);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -462,6 +500,8 @@ mod update {
             .await;
 
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -492,6 +532,8 @@ mod update {
             .await;
 
         assert_eq!(res.status(), StatusCode::NO_CONTENT);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -527,6 +569,8 @@ mod update {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -567,6 +611,8 @@ mod update {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -608,6 +654,8 @@ mod update {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -641,6 +689,8 @@ mod update {
         );
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 }
 
@@ -655,6 +705,8 @@ mod disband {
         let res = env.post("/team/disband").user(&user).send().await;
 
         assert_error!(res, error::USER_NOT_IN_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -669,6 +721,8 @@ mod disband {
         let res = env.post("/team/disband").user(&member).send().await;
 
         assert_error!(res, error::USER_NOT_OWNER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -682,6 +736,8 @@ mod disband {
         let res = env.post("/team/disband").user(&owner).send().await;
 
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -738,6 +794,8 @@ mod disband {
                 "event": "DISBAND_TEAM",
             },
         );
+
+        env.stop().await;
     }
 }
 
@@ -765,7 +823,9 @@ mod kick {
             .send()
             .await;
 
-        assert_error!(res, error::USER_NOT_COOWNER)
+        assert_error!(res, error::USER_NOT_COOWNER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -789,6 +849,8 @@ mod kick {
             .await;
 
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -821,6 +883,8 @@ mod kick {
             .await;
 
         assert_error!(res, error::CANNOT_KICK_OWNER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -853,6 +917,8 @@ mod kick {
             .await;
 
         assert_error!(res, error::CANNOT_KICK_THEMSELF);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -873,6 +939,8 @@ mod kick {
             .await;
 
         assert_error!(res, error::NO_SUCH_MEMBER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -891,6 +959,8 @@ mod kick {
             .await;
 
         assert_error!(res, error::NO_SUCH_MEMBER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -940,6 +1010,8 @@ mod kick {
         );
 
         socket1.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1000,6 +1072,8 @@ mod kick {
         );
 
         socket1.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1076,6 +1150,8 @@ mod kick {
 
         socket1.close(None).await.unwrap();
         socket2.close(None).await.unwrap();
+
+        env.stop().await;
     }
 }
 
@@ -1094,6 +1170,8 @@ mod code {
         let res = env.post("/team/code").user(&member).send().await;
 
         assert_error!(res, error::USER_NOT_COOWNER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1107,6 +1185,8 @@ mod code {
         let res = env.post("/team/code").user(&owner).send().await;
 
         assert_error!(res, error::LOCKED_TEAM);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1128,6 +1208,8 @@ mod code {
         assert!(!message["data"]["code"].as_str().unwrap().is_empty());
 
         socket.close(None).await.unwrap();
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1148,6 +1230,8 @@ mod get {
         let res = env.get("/team").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1192,6 +1276,8 @@ mod get {
                     ],
                 }
             ])
-        )
+        );
+
+        env.stop().await;
     }
 }

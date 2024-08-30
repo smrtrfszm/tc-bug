@@ -33,10 +33,7 @@ use testcontainers::{
     ImageExt,
 };
 use testcontainers_modules::{nats::Nats, postgres::Postgres};
-use tokio::{
-    net::TcpListener,
-    task::JoinHandle,
-};
+use tokio::{net::TcpListener, task::JoinHandle};
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Layer};
 
@@ -182,6 +179,15 @@ pub struct Env {
     _backend_handle: Rc<JoinHandle<()>>,
     _db_container: Rc<Cell<Option<ContainerAsync<Postgres>>>>,
     _nats_container: Rc<Cell<Option<ContainerAsync<Nats>>>>,
+}
+
+impl Env {
+    pub async fn stop(self) {
+        self._backend_handle.abort();
+
+        let _ = self._db_container.as_ref().take().unwrap().rm().await;
+        let _ = self._nats_container.as_ref().take().unwrap().rm().await;
+    }
 }
 
 impl Env {

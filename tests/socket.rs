@@ -14,6 +14,8 @@ async fn timeout() {
     let mut socket = env.socket("/ws").start().await;
 
     assert_close_frame_error!(socket.next().await, error::WEBSOCKET_AUTH_TIMEOUT);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -27,6 +29,8 @@ async fn wrong_token() {
         .await
         .unwrap();
     assert_close_frame_error!(socket.next().await, error::JWT_INVALID_TOKEN);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -40,6 +44,8 @@ async fn wrong_message_type() {
         .await
         .unwrap();
     assert_close_frame_error!(socket.next().await, error::WEBSOCKET_WRONG_MESSAGE_TYPE);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -56,6 +62,8 @@ async fn user_not_registered() {
         .await
         .unwrap();
     assert_close_frame_error!(socket.next().await, error::USER_NOT_REGISTERED);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -72,6 +80,8 @@ async fn no_team() {
         .await
         .unwrap();
     assert_close_frame_error!(socket.next().await, error::USER_NOT_IN_TEAM);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -112,6 +122,8 @@ async fn team_info() {
     assert_eq!(message["data"]["members"][0]["name"], user.name);
 
     socket.close(None).await.unwrap();
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -193,4 +205,6 @@ async fn dont_send_problems_before_start() {
 
     assert!(diff.num_milliseconds() >= 0);
     assert!(diff.num_milliseconds() < 1000);
+
+    env.stop().await;
 }

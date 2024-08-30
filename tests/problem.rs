@@ -35,6 +35,8 @@ mod create {
                 "image": "image link",
             }),
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -54,6 +56,8 @@ mod create {
             .await;
 
         assert_eq!(res.status(), StatusCode::CREATED);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -72,6 +76,8 @@ mod create {
             .await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }
 
@@ -92,6 +98,8 @@ mod get {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -146,6 +154,8 @@ mod get {
                 "image": "test image",
             })
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -157,6 +167,8 @@ mod get {
         let res = env.get("/problem/test").user(&user).send().await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -171,6 +183,8 @@ mod get {
             .await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }
 
@@ -267,6 +281,8 @@ mod list {
                 },
             ])
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -277,6 +293,8 @@ mod list {
         let res = env.get("/problem").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }
 
@@ -297,6 +315,8 @@ mod delete {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -354,6 +374,8 @@ mod delete {
                 },
             }),
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -364,6 +386,8 @@ mod delete {
         let res = env.delete("/problem").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }
 
@@ -395,6 +419,8 @@ mod update {
                 .await;
 
             assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+            env.stop().await;
         }
 
         #[tokio::test]
@@ -459,7 +485,9 @@ mod update {
                     "body": "Test body 2.",
                     "solution": 2,
                 })
-            )
+            );
+
+            env.stop().await;
         }
 
         #[tokio::test]
@@ -525,7 +553,9 @@ mod update {
                     "solution": 2,
                     "image": "test image 2",
                 })
-            )
+            );
+
+            env.stop().await;
         }
 
         #[tokio::test]
@@ -540,6 +570,8 @@ mod update {
                 .await;
 
             assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+            env.stop().await;
         }
     }
 
@@ -565,6 +597,8 @@ mod update {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -629,7 +663,9 @@ mod update {
                 "body": "Test body 2.",
                 "solution": 2,
             })
-        )
+        );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -675,6 +711,8 @@ mod update {
             "failed to update problem: response={:#?}",
             res.json::<Value>().await
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -740,7 +778,9 @@ mod update {
                 "solution": 2,
                 "image": "test image 2",
             })
-        )
+        );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -755,6 +795,8 @@ mod update {
             .await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }
 
@@ -840,6 +882,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -861,6 +905,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -884,6 +930,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -932,6 +980,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_ALREADY_IN_ORDER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -966,6 +1016,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_ALREADY_IN_ORDER);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -986,6 +1038,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1007,6 +1061,8 @@ mod order {
             .await;
 
         assert_error!(res, error::PROBLEM_NOT_FOUND);
+
+        env.stop().await;
     }
 
     async fn get_order_list(env: &Env, user: &impl UserLike) -> Vec<String> {
@@ -1069,6 +1125,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id.to_string(), id2.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1114,6 +1172,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id2.to_string(), id.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1172,6 +1232,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id.to_string(), id2.to_string(), id3.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1197,6 +1259,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id2.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1222,6 +1286,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id.to_string(), id3.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1247,6 +1313,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1273,6 +1341,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id2.to_string(), id1.to_string(), id3.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1299,6 +1369,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id2.to_string(), id1.to_string(), id3.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1325,6 +1397,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id1.to_string(), id3.to_string(), id2.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1351,6 +1425,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id1.to_string(), id3.to_string(), id2.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1385,6 +1461,8 @@ mod order {
                 id2.to_string()
             ]
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1419,6 +1497,8 @@ mod order {
                 id2.to_string()
             ]
         );
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1448,6 +1528,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id3.to_string(), id2.to_string(), id1.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1477,6 +1559,8 @@ mod order {
 
         let order = get_order_list(&env, &user).await;
         assert_eq!(order, [id3.to_string(), id2.to_string(), id1.to_string()]);
+
+        env.stop().await;
     }
 
     #[tokio::test]
@@ -1487,5 +1571,7 @@ mod order {
         let res = env.delete("/problem").user(&user).send().await;
 
         assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+        env.stop().await;
     }
 }

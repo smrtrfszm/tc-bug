@@ -18,6 +18,8 @@ async fn not_admin() {
         .await;
 
     assert_error!(res, error::NOT_ENOUGH_PERMISSIONS);
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -46,6 +48,8 @@ async fn empty() {
         actual: body,
         expected: json!([])
     );
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -111,6 +115,8 @@ async fn works() {
             "wrong": 0,
         }])
     );
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -211,6 +217,8 @@ async fn works_after_delete() {
             "wrong": 0,
         }])
     );
+
+    env.stop().await;
 }
 
 #[tokio::test]
@@ -276,4 +284,6 @@ async fn works_with_wrong() {
             "wrong": 1,
         }])
     );
+
+    env.stop().await;
 }
